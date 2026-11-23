@@ -63,7 +63,7 @@
  <img src="./images/visualize/permute().png" alt="permute_CHW_to_HWC" width="50%">
  </p>   
 
-
+👉 visualize.py 마지막 정리  
 | 핵심 코드 | 이해해야 할 개념 |
 |---|---|
 | `train_dataset[i]` | Dataset 개별 데이터 접근 |
@@ -78,8 +78,12 @@
 | `.min()`, `.max()` | 픽셀값 범위 확인 |
 | `[0]`, `[1]`, `[2]` | RGB 채널별 접근 |
 | `.mean()` | 픽셀 평균 계산 |
-| `.item()` | Tensor 값을 Python 숫자로 변환 |  
-👉 visualize.py  
+| `.item()` | Tensor 값을 Python 숫자로 변환 |   
+
+
+
+
+
 
 
 
