@@ -63,7 +63,7 @@
  <img src="./images/visualize/permute().png" alt="permute_CHW_to_HWC" width="50%">
  </p>   
 
-👉 visualize.py 마지막 정리  
+## 👉 visualize.py 마지막 정리  
 | 핵심 코드 | 이해해야 할 개념 |
 |---|---|
 | `train_dataset[i]` | Dataset 개별 데이터 접근 |
