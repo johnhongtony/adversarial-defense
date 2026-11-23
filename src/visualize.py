@@ -110,18 +110,17 @@ fig, axes = plt.subplots(4, 4, figsize=(10, 10))
 # 4행 × 4열의 이미지 출력 영역 생성
 # fig(figure): 그림 전체가 그려지는 커다란 흰색 도화지 한 장, 전체 그림을 관리하는 Figure 객체
 # axes: 개별 이미지 출력 영역인 Axes 객체 배열(도화지 안에 세로 4줄 × 가로 4줄로 나눈 16개의 작은 액자(서브플롯) 모음)
-# figsize: 전체 그림의 크기 (가로 10인치 × 세로 10인치), 크기를 안 키우면 16개 그림과 제목이 서로 다닥다닥 붙어서 글자가 겹침
+# figsize: 전체 그림의 크기 (가로 10인치 × 세로 10인치), 크기를 안 키우면 16개 그림과 제목이 서로 좁게 붙어서 글자가 겹침
 
 # 2차원 액자 배열을 1줄로 펴서 순회하기
 for i, ax in enumerate(axes.flat):
-# axes.flat을 쓰는 이유
+# axes.flat을 쓰는 이유:
 # axes는 4행 4열의 2차원 구조라서 원래는 axes[0][0], axes[0][1]처럼 행과 열 번호를 두 번 적어야 접근할 수 있음
 # .flat을 붙이면 4×4 칸을 첫 번째 줄 왼쪽부터 마지막 줄 오른쪽까지 0번~15번의 1줄(1차원)로 쭉 펴줌
 # 덕분에 for문 하나로 16칸을 차례대로 돌 수 있음    
 #
 # enumerate(...)의 역할:
-# axes.flat에서 액자(ax)를 하나씩 꺼낼 때
-# 현재 몇 번째 칸인지 번호(i = 0, 1, ..., 15)까지 함께 붙여줌
+# axes.flat에서 액자(ax)를 하나씩 꺼낼 때 현재 몇 번째 칸인지 번호(i = 0, 1, ..., 15)까지 함께 붙여줌
 # 이 i 덕분에 images[i]와 labels[i]에서 딱 맞는 이미지와 정답을 꺼낼 수 있음
 
     # PyTorch(CHW)와 Matplotlib(HWC)의 이미지 차원 순서가 다르므로 변경
@@ -136,6 +135,8 @@ for i, ax in enumerate(axes.flat):
 
     ax.set_title(classes[labels[i]])
     # 해당 이미지의 정답 Label을 클래스 이름으로 변환하여 제목으로 표시
+    # labels[i]에는 숫자(예: 6)가 들어 있음
+    # classes[6]을 조회해 사람이 읽을 수 있는 영어 단어("frog")로 바꾼 뒤 액자 위쪽 제목으로 달아줌
 
     ax.axis("off")
     # 이미지 주변의 X축, Y축 및 눈금 제거
@@ -146,18 +147,32 @@ plt.tight_layout()
 
 plt.show()
 # 최종 이미지 시각화
+# 지금까지 메모리에 차곡차곡 그려둔 도화지(fig)를 실제 화면 창에 띄움
 
 
 # 7. 이미지별 Tensor 및 픽셀값 분석
 # 눈으로 본 이미지가 컴퓨터 내부에서는 어떤 숫자와 차원 구조로 이루어져 있는지 해부해 보는 수치 분석 단계
+# ★ Adversarial Attack은 이미지의 픽셀값을 변형하는 방식으로 이루어질 확률이 높음
 
 for i in range(16):
+    # 앞선 시각화 코드에서는 enumerate(axes.flat)을 사용했는데,
+    # 이번에는 단순히 이미지 데이터를 순서대로 출력하기 때문에 range(16)을 사용
 
     print(f"\nImage {i+1}")
+    # 여기서는 Python의 f-string을 사용
+    # f: 문자열 안에 변수를 삽입할 수 있도록 함
+    # \n: 줄바꿈
+    # {i+1}: 변수 i에 1을 더한 값을 출력
+    # i+1 사용이유: Python의 인덱스는 0부터 시작하지만 사람이 확인할 때는 1부터 시작하는 것이 편하기 때문
+    # i = 0 → Image 1
+    # i = 1 → Image 2
+    # ...
+    # i = 15 → Image 16
 
     # 이미지 기본 정보
     print("Label:", classes[labels[i]])
     # 정답 Label을 클래스 이름으로 변환하여 출력
+    # 예를 들어 Label이 7이라면 horse가 출력
 
     print("Shape:", images[i].shape)
     # 이미지 Tensor의 차원 확인
@@ -167,6 +182,7 @@ for i in range(16):
     print("Min:", images[i].min().item())
     print("Max:", images[i].max().item())
 
+    # images[i] : i번째 이미지 Tensor
     # min(): 이미지 전체 픽셀값 중 최솟값
     # max(): 이미지 전체 픽셀값 중 최댓값
     # item(): Tensor의 단일 값을 Python 숫자로 변환
@@ -182,5 +198,6 @@ for i in range(16):
     # images[i][2]: B(Blue) 채널 → Shape [32, 32]
     #
     # mean(): 각 채널의 1,024개 픽셀값 평균 계산
+    # $$R_{mean} = \frac{1}{1024}\sum_{h=1}^{32}\sum_{w=1}^{32}R_{h,w}$$
     # 채널별 평균값을 비교하여 이미지의 전반적인 색상 분포 확인
     # 단, 평균값만으로 개별 픽셀의 색상이나 이미지 전체의 색상을 판단할 수는 없음
